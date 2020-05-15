@@ -1,0 +1,33 @@
+Format: 1.8
+Date: Thu, 14 May 2020 22:13:08 +0800
+Source: linux-5.7.0-rc4-aml-s9xxx-starx
+Binary: linux-image-5.7.0-rc4-aml-s9xxx-starx linux-headers-5.7.0-rc4-aml-s9xxx-starx linux-libc-dev
+Architecture: arm64
+Version: 5.7.0-rc4-aml-s9xxx-starx-1
+Distribution: bionic
+Urgency: low
+Maintainer: root <root@localhost>
+Changed-By: root <root@localhost>
+Description:
+ linux-headers-5.7.0-rc4-aml-s9xxx-starx - Linux kernel headers for 5.7.0-rc4-aml-s9xxx-starx on arm64
+ linux-image-5.7.0-rc4-aml-s9xxx-starx - Linux kernel, version 5.7.0-rc4-aml-s9xxx-starx
+ linux-libc-dev - Linux support headers for userspace development
+Changes:
+ linux-5.7.0-rc4-aml-s9xxx-starx (5.7.0-rc4-aml-s9xxx-starx-1) bionic; urgency=low
+ .
+   * Custom built Linux kernel.
+Checksums-Sha1:
+ 466d1f5396da74c317094345fce07baa495a934e 5811 linux-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.buildinfo
+ 3dae9aa37400394f803f5fd924634ce084aa61bb 7197568 linux-headers-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ 2c81d840672a549cf4b0f5f8af1993c464d9e6df 29004256 linux-image-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ 14178df9db1d1b5cfcc3a34567a144db4ca35d75 1075732 linux-libc-dev_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+Checksums-Sha256:
+ f209cc42c17d73741f9561ad6fe8f65981c76127110c9fd47bee237cc6d8e005 5811 linux-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.buildinfo
+ 66bd938cadbc6499d0a331df76bb7ae4cf39add8d3acc400e3a328a6810c9487 7197568 linux-headers-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ 104cd3bbe1b88082bae7a3fa6382bcdcab33eed01d61226b2cb9584ce031dc08 29004256 linux-image-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ 037045b0d4ce11cad3f86e6b0024321190ab272d56d9ad5936ffb8e20a11a07e 1075732 linux-libc-dev_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+Files:
+ c8733b28f14d2d8eca8c7fe72ceafe8d 5811 kernel optional linux-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.buildinfo
+ 3f750a893983686466c4fb3a9ae1daa9 7197568 kernel optional linux-headers-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ bbb83c092e278c4b2caeb89b3b029387 29004256 kernel optional linux-image-5.7.0-rc4-aml-s9xxx-starx_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb
+ 37402f8172ecc84cf26753a744065ee6 1075732 devel optional linux-libc-dev_5.7.0-rc4-aml-s9xxx-starx-1_arm64.deb

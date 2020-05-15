@@ -9,11 +9,12 @@
 
 # 安装
 请在终端执行以下命令:
-`dpkg -i *deb`
-`mv /boot/zImage /boot/zImage.old`
-`cp ./Image /boot/zImage`
-`reboot`
-
+```
+dpkg -i *deb
+mv /boot/zImage /boot/zImage.old
+cp ./Image /boot/zImage
+reboot
+```
 # 声明
 感谢[150balbes](https://github.com/150balbes)提供的repo以进行编译。  
 用户安装此内核而引发的问题均与Starx及原REPO作者无关。  
@@ -23,6 +24,6 @@
 
 # 转载
 本目录下的资源禁止分享至`恩山论坛`。  
-本人嫉妒讨厌其论坛的管理员。
-私自将本人的账号封禁。  
+本人极度讨厌其论坛的管理员。
+私自将本人的账号无理由封禁。  
 其他论坛/群组/博客均可，但请务必保留Starx及原作者的REPO链接。

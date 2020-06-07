@@ -1,0 +1,33 @@
+Format: 1.8
+Date: Sat, 06 Jun 2020 11:29:38 +0800
+Source: linux-5.7.0-rc7-aml-s9xxx-starx
+Binary: linux-headers-5.7.0-rc7-aml-s9xxx-starx linux-image-5.7.0-rc7-aml-s9xxx-starx linux-libc-dev
+Architecture: arm64
+Version: 5.7.0-rc7-aml-s9xxx-starx-8
+Distribution: stretch
+Urgency: low
+Maintainer: root <root@vmi340509.contaboserver.net>
+Changed-By: root <root@vmi340509.contaboserver.net>
+Description:
+ linux-headers-5.7.0-rc7-aml-s9xxx-starx - Linux kernel headers for 5.7.0-rc7-aml-s9xxx-starx on arm64
+ linux-image-5.7.0-rc7-aml-s9xxx-starx - Linux kernel, version 5.7.0-rc7-aml-s9xxx-starx
+ linux-libc-dev - Linux support headers for userspace development
+Changes:
+ linux-5.7.0-rc7-aml-s9xxx-starx (5.7.0-rc7-aml-s9xxx-starx-8) stretch; urgency=low
+ .
+   * Custom built Linux kernel.
+Checksums-Sha1:
+ a8d0214d93506af88dfec89e0d1da233dc6f195d 5142 linux-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.buildinfo
+ 65f4c55ce533ab4cc5ee315b42ecc5c2ef81922a 7367420 linux-headers-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ 4f8d5e5364f82a69f442fff8ef2ad39976888bcb 29039892 linux-image-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ eecb2b9d133782217d3a8e7b2a20531cb406c9ae 1078806 linux-libc-dev_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+Checksums-Sha256:
+ de02559188f45a8d77f08116eec37ae07f25f260a265e942465a2393b2623d78 5142 linux-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.buildinfo
+ a01487e10401818bfe18e16d2c42ea21db59bf5fe4ef34b72089242cc7ad4c8b 7367420 linux-headers-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ 0e3427a17b2e83abcf4613e4ce5971efb0c50622943cc5dddc0e3a06481b88b4 29039892 linux-image-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ 9beaf6c5da4738ff26375c89248f316ae6e3eef7137f465c103a10253a9fa0ef 1078806 linux-libc-dev_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+Files:
+ 77bde8f6decc4fd91c4a0ecc74154413 5142 kernel optional linux-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.buildinfo
+ 9b215d7b3fa7e34de814de536b38b6ee 7367420 kernel optional linux-headers-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ eba0a4a10771c5508eaa1c7e68fb41ac 29039892 kernel optional linux-image-5.7.0-rc7-aml-s9xxx-starx_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb
+ 5c4513a33af0fc11e6eca3e92ebfc2fb 1078806 devel optional linux-libc-dev_5.7.0-rc7-aml-s9xxx-starx-8_arm64.deb

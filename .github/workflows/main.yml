@@ -23,7 +23,7 @@ jobs:
     - name: Installing cross compile toolchain
       run: |
         wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/$TOOLCHAIN.tar.xz
-        xd -d $TOOLCHAIN.tar.xz
+        xz -d $TOOLCHAIN.tar.xz
         tar xf $TOOLCHAIN.tar
         echo "PATH=$PATH:$(pwd)/$TOOLCHAIN/bin" >> ~/.bashrc
         source ~/.bashrc

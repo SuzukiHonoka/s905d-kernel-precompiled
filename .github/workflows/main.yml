@@ -1,5 +1,7 @@
 name: S905D KERNEL CI
 on:
+  release:
+    types: published
   push:
     branches:
       - master

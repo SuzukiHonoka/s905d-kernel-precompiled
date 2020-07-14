@@ -7,6 +7,7 @@ on:
       - master
     paths:
       - '.config'
+      - '.github/workflows/main.yml'
   pull_request:
     branches: [ master ]
 env:
@@ -21,7 +22,7 @@ jobs:
     - name: Download CONFIG FILE
       run: wget https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config
     - name: Installing requirements 
-      run: sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+      run: sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms  libudev-dev libpci-dev libiberty-dev
     - name: Installing cross compile toolchain
       run: |
         wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/$TOOLCHAIN.tar.xz
@@ -29,13 +30,13 @@ jobs:
         tar xf $TOOLCHAIN.tar
         echo "PATH=$PATH:$(pwd)/$TOOLCHAIN/bin" >> ~/.bashrc
         source ~/.bashrc
+        export ARCH=arm64
+        export CROSS_COMPILE=$(pwd)/$TOOLCHAIN/bin/aarch64-linux-gnu-
     - name: Clone s905d kernel repo
       run: git clone --depth=1 $KURL
     - name: Build Kernel  
       run: |
         cd Amlogic_s905-kernel
-        export ARCH=arm64
-        export CROSS_COMPILE=aarch64-linux-gnu-
         cp ../.config . -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
     - uses: actions/upload-artifact@v2

@@ -44,5 +44,5 @@ jobs:
       with:
         name: Kernel $KVER
         path: |
-          Amlogic_s905-kernel/arch/arm64/boot/Image
-          *$KVER*
+          "Amlogic_s905-kernel/arch/arm64/boot/Image"
+          "*$KVER*"

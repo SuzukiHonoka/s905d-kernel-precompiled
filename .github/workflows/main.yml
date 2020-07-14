@@ -28,7 +28,7 @@ jobs:
         wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/$TOOLCHAIN.tar.xz
         xz -d $TOOLCHAIN.tar.xz
         tar xf $TOOLCHAIN.tar
-        echo "PATH=$PATH:$(pwd)/$TOOLCHAIN/bin" >> ~/.bashrc
+        export PATH=$PATH:$(pwd)/$TOOLCHAIN/bin
         source ~/.bashrc
         export ARCH=arm64
         export CROSS_COMPILE=$(pwd)/$TOOLCHAIN/bin/aarch64-linux-gnu-
@@ -44,5 +44,5 @@ jobs:
       with:
         name: Kernel $KVER
         path: |
-          arch/arm64/boot/Image
-          $ROOTDIR/*$KVER*
+          Amlogic_s905-kernel/arch/arm64/boot/Image
+          *$KVER*

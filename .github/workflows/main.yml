@@ -1,7 +1,10 @@
 name: S905D KERNEL CI
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    paths:
+      - '.config'
   pull_request:
     branches: [ master ]
 env:

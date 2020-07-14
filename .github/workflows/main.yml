@@ -36,6 +36,7 @@ jobs:
       run: git clone --depth=1 $KURL
     - name: Build Kernel  
       run: |
+        ROOTDIR=$(pwd)
         cd Amlogic_s905-kernel
         cp ../.config . -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
@@ -43,5 +44,5 @@ jobs:
       with:
         name: Kernel $KVER
         path: |
-          ./arch/arm64/boot/Image
-          ../*$KVER*
+          arch/arm64/boot/Image
+          $ROOTDIR/*$KVER*

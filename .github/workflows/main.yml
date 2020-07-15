@@ -36,14 +36,15 @@ jobs:
       run: git clone --depth=1 $KURL
     - name: Build Kernel  
       run: |
-        ROOTDIR=$(pwd)
         cd Amlogic_s905-kernel
         cp ../.config . -v
-        #make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
     - name: LIST FILES
-      run: ls -lah $ROOTDIR
+      run: ls -lah $GITHUB_WORKSPACE
     - uses: actions/upload-artifact@v2
       with:
-        name: Kernel $KVER
+        name: Kernel ${{ env.KVER }}
         path: |
+          *${{ env.BUILD_DIR }}*
+          Amlogic_s905-kernel/arch/arm64/boot/Image
           .config

@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Download CONFIG FILE
-      run: wget https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config
+      run: wget https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
@@ -29,15 +29,15 @@ jobs:
         export PATH=$PATH:$(pwd)/$TOOLCHAIN/bin
         source ~/.bashrc
         export ARCH=arm64
-        export CROSS_COMPILE=$(pwd)/$TOOLCHAIN/bin/aarch64-linux-gnu-
+        export CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu-
     - name: Clone s905d kernel repo
       run: git clone --depth=1 --single-branch -b master $KURL
     - name: Build Kernel  
       run: |
         cd Amlogic_s905-kernel
-        cp ../.config .config -v
-        make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
-        make Image -j$(nproc)
+        cp $GITHUB_WORKSPACE/.config .config -v
+        make ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- -j$(nproc) Image
     - name: LIST FILES
       run: |
         echo "ROOT DIR"

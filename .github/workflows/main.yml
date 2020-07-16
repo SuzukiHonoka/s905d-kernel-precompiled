@@ -39,7 +39,6 @@ jobs:
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
         make ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
-        make ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- -j$(nproc) Image
     - name: LIST FILES
       run: |
         echo "ROOT DIR"

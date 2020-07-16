@@ -45,6 +45,6 @@ jobs:
       with:
         name: Kernel ${{ env.KVER }}
         path: |
-          *${{ env.BUILD_DIR }}*
+          *${{ env.KVER }}*
           Amlogic_s905-kernel/arch/arm64/boot/Image
           .config

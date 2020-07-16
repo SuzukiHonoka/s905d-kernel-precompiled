@@ -8,8 +8,6 @@ on:
     paths:
       - '.config'
       - '.github/workflows/main.yml'
-  pull_request:
-    branches: [ master ]
 env:
   CONFIG_URL: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config 
   KVER: 5.7.7 
@@ -39,6 +37,7 @@ jobs:
         cd Amlogic_s905-kernel
         cp ../.config . -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        cp arch/arm64/boot/Image .. -v
     - name: LIST FILES
       run: ls -lah $GITHUB_WORKSPACE
     - uses: actions/upload-artifact@v2
@@ -46,5 +45,5 @@ jobs:
         name: Kernel ${{ env.KVER }}
         path: |
           *${{ env.KVER }}*
-          Amlogic_s905-kernel/arch/arm64/boot/Image
+          Image
           .config

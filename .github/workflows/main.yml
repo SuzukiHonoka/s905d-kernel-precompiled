@@ -35,7 +35,7 @@ jobs:
     - name: Build Kernel  
       run: |
         cd Amlogic_s905-kernel
-        cp ../.config . -v
+        cp ../.config .config -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
         make Image -j$(nproc)
     - name: LIST FILES

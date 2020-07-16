@@ -37,13 +37,15 @@ jobs:
         cd Amlogic_s905-kernel
         cp ../.config . -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
-        cp arch/arm64/boot/Image .. -v
     - name: LIST FILES
-      run: ls -lah $GITHUB_WORKSPACE
+      run: |
+        echo "ROOT DIR"
+        ls -lah $GITHUB_WORKSPACE
+        echo "BOOT IMAGE"
+        ls -lah Amlogic_s905-kernel/arch/arm64/boot/
     - uses: actions/upload-artifact@v2
       with:
         name: Kernel ${{ env.KVER }}
         path: |
           *${{ env.KVER }}*
-          Image
           .config

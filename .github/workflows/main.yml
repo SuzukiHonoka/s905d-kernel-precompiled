@@ -20,7 +20,7 @@ jobs:
     - name: Download CONFIG FILE
       run: wget https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config
     - name: Installing requirements 
-      run: sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms  libudev-dev libpci-dev libiberty-dev
+      run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
       run: |
         wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/$TOOLCHAIN.tar.xz
@@ -31,12 +31,13 @@ jobs:
         export ARCH=arm64
         export CROSS_COMPILE=$(pwd)/$TOOLCHAIN/bin/aarch64-linux-gnu-
     - name: Clone s905d kernel repo
-      run: git clone --depth=1 $KURL
+      run: git clone --depth=1 --single-branch -b master $KURL
     - name: Build Kernel  
       run: |
         cd Amlogic_s905-kernel
         cp ../.config . -v
         make -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make Image -j$(nproc)
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
@@ -47,5 +48,6 @@ jobs:
       with:
         name: Kernel ${{ env.KVER }}
         path: |
+          Amlogic_s905-kernel/arch/arm64/boot/Image
           *${{ env.KVER }}*
           .config

@@ -10,7 +10,8 @@ on:
       - '.github/workflows/main.yml'
 env:
   MODURL: https://github.com/cilynx/rtl88x2bu 
-  INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install.sh 
+  INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
+  INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
   KVER: 5.7.9
   KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
@@ -23,6 +24,7 @@ jobs:
       run: |
         wget $CONFIG_URL
         wget $INSTALL_URL
+        wget $INSTALLM_URL
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
@@ -62,7 +64,8 @@ jobs:
         name: Kernel ${{ env.KVER }}
         path: |
           88x2bu.ko
-          install.sh
+          install_kmod.sh
+          install_kernel.sh
           Image
           *${{ env.KVER }}*
           .config

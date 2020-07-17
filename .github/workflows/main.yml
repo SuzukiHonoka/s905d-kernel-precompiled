@@ -11,7 +11,7 @@ on:
 env:
   CONFIG_URL: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config 
   KVER: 5.7.7 
-  KURL:  https://github.com/150balbes/Amlogic_s905-kernel
+  KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:
   build:

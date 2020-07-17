@@ -9,16 +9,20 @@ on:
       - '.config'
       - '.github/workflows/main.yml'
 env:
-  CONFIG_URL: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/raw/master/.config 
-  KVER: 5.7.7 
+  MODURL: https://github.com/cilynx/rtl88x2bu 
+  INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install.sh 
+  CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
+  KVER: 5.7.9
   KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Download CONFIG FILE
-      run: wget https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config
+    - name: Download RES
+      run: |
+        wget $CONFIG_URL
+        wget $INSTALL_URL
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
@@ -30,15 +34,23 @@ jobs:
         source ~/.bashrc
         export ARCH=arm64
         export CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu-
-    - name: Clone s905d kernel repo
-      run: git clone --depth=1 --single-branch -b master $KURL
+    - name: Clone repos
+      run: |
+        git clone --depth=1 --single-branch -b master $KURL
+        git clone --depth=1 $MODURL
     - name: Build Kernel  
       run: |
-        cd Amlogic_s905-kernel
+        cd $GITHUB_WORKSPACE/Amlogic_s905-kernel
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
-        make ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- -j$(nproc) LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        cp arch/arm64/boot/Image $GITHUB_WORKSPACE
+    - name: Build KERNEL MOD
+      run: |
+        cd $GITHUB_WORKSPACE/rtl88x2bu
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=$GITHUB_WORKSPACE/Amlogic_s905-kernel
+        cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
@@ -49,6 +61,8 @@ jobs:
       with:
         name: Kernel ${{ env.KVER }}
         path: |
-          Amlogic_s905-kernel/arch/arm64/boot/Image
+          88x2bu.ko
+          install.sh
+          Image
           *${{ env.KVER }}*
           .config

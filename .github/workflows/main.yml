@@ -13,7 +13,7 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.7.9
+  KVER: 5.7.10
   KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:

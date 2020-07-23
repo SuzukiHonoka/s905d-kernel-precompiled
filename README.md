@@ -1,3 +1,6 @@
+# 构建状态
+![S905D KERNEL CI](https://github.com/SuzukiHonoka/s905d-kernel-precompiled/workflows/S905D%20KERNEL%20CI/badge.svg?branch=master)
+
 # 简介
 此内核由Starx通过[REPO](https://github.com/150balbes/Amlogic_s905-kernel)直接进行编译，  
 增加了对ARM 32bit 二进制文件的兼容。  

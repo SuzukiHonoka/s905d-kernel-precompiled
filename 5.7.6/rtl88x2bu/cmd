@@ -1,1 +1,0 @@
-make ARCH=arm64 CROSS_COMPILE=/home/starx/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- KSRC=/home/starx/Amlogic_s905-kernel -j6

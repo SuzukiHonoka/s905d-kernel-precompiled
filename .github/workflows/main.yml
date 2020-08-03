@@ -13,7 +13,7 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.7.11
+  KVER: 5.8
   KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:
@@ -44,8 +44,8 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/Amlogic_s905-kernel
         cp $GITHUB_WORKSPACE/.config .config -v
-        sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
-        touch .scmversion
+        #sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
+        #touch .scmversion
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
     - name: Build KERNEL MOD

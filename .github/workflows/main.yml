@@ -39,7 +39,6 @@ jobs:
     - name: Clone repos
       run: |
         git clone --depth=1 --single-branch -b master $KURL
-        git clone --depth=1 $MODURL
     - name: Build Kernel  
       run: |
         cd $GITHUB_WORKSPACE/Amlogic_s905-kernel
@@ -48,11 +47,6 @@ jobs:
         touch .scmversion
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
-    - name: Build KERNEL MOD
-      run: |
-        cd $GITHUB_WORKSPACE/rtl88x2bu
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=$GITHUB_WORKSPACE/Amlogic_s905-kernel
-        cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
@@ -63,8 +57,6 @@ jobs:
       with:
         name: Kernel ${{ env.KVER }}
         path: |
-          88x2bu.ko
-          install_kmod.sh
           install_kernel.sh
           Image
           *${{ env.KVER }}*
@@ -72,7 +64,7 @@ jobs:
     - name: ZIP FILES
       run: |
         cd $GITHUB_WORKSPACE
-        zip data.zip 88x2bu.ko install_kmod.sh install_kernel.sh Image *${{ env.KVER }}* .config
+        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

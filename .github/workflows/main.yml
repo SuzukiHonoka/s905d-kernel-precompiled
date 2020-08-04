@@ -9,8 +9,6 @@ on:
       - '.config'
       - '.github/workflows/main.yml'
 env:
-  MODURL: https://github.com/cilynx/rtl88x2bu 
-  INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
   KVER: 5.8
@@ -24,7 +22,6 @@ jobs:
       run: |
         wget $CONFIG_URL
         wget $INSTALL_URL
-        wget $INSTALLM_URL
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
@@ -47,6 +44,7 @@ jobs:
         touch .scmversion
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
+        cp arch/arm64/boot/dts/*.dtb $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
@@ -61,10 +59,11 @@ jobs:
           Image
           *${{ env.KVER }}*
           .config
+          *.dtb
     - name: ZIP FILES
       run: |
         cd $GITHUB_WORKSPACE
-        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config
+        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

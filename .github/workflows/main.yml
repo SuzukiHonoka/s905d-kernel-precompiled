@@ -25,6 +25,7 @@ jobs:
       run: |
         wget $CONFIG_URL
         wget $INSTALL_URL
+        wget $INSTALLM_URL
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
@@ -39,6 +40,7 @@ jobs:
     - name: Clone repos
       run: |
         git clone --depth=1 --single-branch -b master $KURL
+        git clone --depth=1 $MODURL
     - name: Build Kernel  
       run: |
         cd $GITHUB_WORKSPACE/Amlogic_s905-kernel

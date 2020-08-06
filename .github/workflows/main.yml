@@ -9,6 +9,9 @@ on:
       - '.config'
       - '.github/workflows/main.yml'
 env:
+  MODURL: https://github.com/cilynx/rtl88x2bu 
+  MPATCH:  https://github.com/cilynx/rtl88x2bu/pull/58.patch
+  INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
   KVER: 5.8
@@ -45,6 +48,13 @@ jobs:
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
+    - name: Build KERNEL MOD
+      run: |
+        cd $GITHUB_WORKSPACE/rtl88x2bu
+        wget $MPATCH
+        git apply 58.patch
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=$GITHUB_WORKSPACE/Amlogic_s905-kernel
+        cp 88x2bu.ko $GITHUB_WORKSPACE    
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
@@ -55,6 +65,8 @@ jobs:
       with:
         name: Kernel ${{ env.KVER }}
         path: |
+          88x2bu.ko
+          install_kmod.sh
           install_kernel.sh
           Image
           *${{ env.KVER }}*
@@ -63,7 +75,7 @@ jobs:
     - name: ZIP FILES
       run: |
         cd $GITHUB_WORKSPACE
-        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
+        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb 88x2bu.ko install_kmod.sh
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

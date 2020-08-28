@@ -8,6 +8,8 @@ on:
     paths:
       - '.config'
       - '.github/workflows/main.yml'
+  watch:
+    types: [started]
 env:
   MODURL: https://github.com/cilynx/rtl88x2bu 
   MPATCH:  https://github.com/cilynx/rtl88x2bu/pull/58.patch
@@ -20,6 +22,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
     steps:
     - name: Download RES
       run: |

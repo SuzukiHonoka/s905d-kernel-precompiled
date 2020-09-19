@@ -5,7 +5,7 @@
 此内核由**Starx**通过[内核仓库](https://github.com/SuzukiHonoka/Amlogic_s905-kernel)直接进行编译，  
 增加了对 **ARM 32bit** 二进制文件的兼容及其他必要特性，功能的支持。  
 除此之外无任何额外改动。
-# <del>Linux Kernel 5.8.5 的 DWC2 有问题，可能导致USB不可用，不推荐安装。<del> Linux Kernel 5.8.10 的USB问题已修复。
+# ~~~Linux Kernel 5.8.5 的 DWC2 有问题，可能导致USB不可用，不推荐安装。~~~ Linux Kernel 5.8.10 的USB问题已修复。
 ## Linux Kernel 5.8 安装注意事项!!
 由于此内核发行版包含了许多变更，测试需要更换DTB才能正常启动，使用USB等。  
 请在安装替换内核镜像前将新的DTB文件覆盖到旧的DTB文件，以确保设备能够正常启动。  

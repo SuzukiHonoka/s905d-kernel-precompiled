@@ -21,7 +21,7 @@ env:
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
     - name: Download RES

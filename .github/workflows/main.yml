@@ -52,7 +52,7 @@ jobs:
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
-        cp *$KVER* $GITHUB_WORKSPACE
+        cp ../*$KVER* $GITHUB_WORKSPACE
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
     - name: Build KERNEL MOD

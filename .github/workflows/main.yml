@@ -16,8 +16,8 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.8.14
-  KURL:  https://github.com/SuzukiHonoka/Amlogic_s905-kernel
+  KVER: 5.9.1
+  KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   TOOLCHAIN: gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu 
 jobs:
   build:
@@ -42,11 +42,12 @@ jobs:
         export CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu-
     - name: Clone repos
       run: |
-        git clone --depth=1 --single-branch -b master $KURL
+        wget $KURL
+        sh setup_new_kernel.sh
         git clone --depth=1 $MODURL
     - name: Build Kernel  
       run: |
-        cd $GITHUB_WORKSPACE/Amlogic_s905-kernel
+        cd /tmp/ramfs/build/linux-$KVER
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion

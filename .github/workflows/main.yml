@@ -44,7 +44,7 @@ jobs:
       run: |
         wget $KURL
         sh setup_new_kernel.sh
-        git clone --depth=1 $MODURL
+        git clone --depth=1 $MODURL /tmp/ramfs/build/KMOD
     - name: Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER
@@ -56,17 +56,17 @@ jobs:
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
     - name: Build KERNEL MOD
       run: |
-        cd $GITHUB_WORKSPACE/rtl88x2bu
+        cd /tmp/ramfs/build/KMOD
         wget $MPATCH
         git apply 58.patch
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=$GITHUB_WORKSPACE/Amlogic_s905-kernel
-        cp 88x2bu.ko $GITHUB_WORKSPACE    
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
+        cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |
         echo "ROOT DIR"
         ls -lah $GITHUB_WORKSPACE
         echo "BOOT IMAGE"
-        ls -lah Amlogic_s905-kernel/arch/arm64/boot/
+        ls -lah /tmp/ramfs/build/linux-$KVER/arch/arm64/boot/
     - uses: actions/upload-artifact@v2
       with:
         name: Kernel ${{ env.KVER }}

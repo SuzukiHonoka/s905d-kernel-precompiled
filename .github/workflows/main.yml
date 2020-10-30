@@ -43,7 +43,7 @@ jobs:
     - name: Clone repos
       run: |
         wget $KURL
-        sh setup_new_kernel.sh
+        sh setup_new_kernel.sh $KVER
         git clone --depth=1 $MODURL /tmp/ramfs/build/KMOD
     - name: Build Kernel  
       run: |

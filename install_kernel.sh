@@ -7,6 +7,7 @@ cd $KVER
 fi
 dpkg -i *deb
 mv /boot/zImage /boot/zImage.old
+cp ./*dtb /boot/dtb/amlogic/
 cp ./Image /boot/zImage
 echo "Installation completed."
 echo "You may need to do a reboot for verity now."

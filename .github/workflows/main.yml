@@ -12,7 +12,6 @@ on:
     types: [started]
 env:
   MODURL: https://github.com/cilynx/rtl88x2bu 
-  MPATCH:  https://github.com/cilynx/rtl88x2bu/pull/58.patch
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
@@ -58,8 +57,6 @@ jobs:
     - name: Build KERNEL MOD
       run: |
         cd /tmp/ramfs/build/KMOD
-        wget $MPATCH
-        git apply 58.patch
         make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/$TOOLCHAIN/bin/aarch64-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
         cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES

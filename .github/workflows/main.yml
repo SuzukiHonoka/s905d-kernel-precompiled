@@ -29,7 +29,7 @@ jobs:
         wget $INSTALL_URL
         wget $INSTALLM_URL
     - name: Installing requirements 
-      run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop mkimage
+      run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Installing cross compile toolchain
       run: |
         wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/$TOOLCHAIN.tar.xz

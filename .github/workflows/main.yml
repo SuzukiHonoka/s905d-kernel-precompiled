@@ -40,7 +40,7 @@ jobs:
         wget $TOOLCHAIN
         xz -d gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz
         tar xf gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar
-        export PATH=$PATH:$(pwd)/$TOOLCHAIN/bin
+        export PATH=$PATH:$(pwd)/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin
         source ~/.bashrc
         export ARCH=arm64
         export CROSS_COMPILE=$GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu-

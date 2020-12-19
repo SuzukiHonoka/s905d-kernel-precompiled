@@ -51,14 +51,14 @@ jobs:
         echo 'PATH=$PATH:/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin' > ~/.bashrc
         source ~/.bashrc
         export ARCH=arm64
-        export CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin
+        export CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
     - name: Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
     - name: Adjust Kernel Image Load addr and cp
       run: | 
         cd /tmp/ramfs/build/linux-$KVER
@@ -69,7 +69,7 @@ jobs:
     - name: Build KERNEL MOD
       run: |
         cd /tmp/ramfs/build/KMOD
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin KSRC=/tmp/ramfs/build/linux-$KVER
+        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
         cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |

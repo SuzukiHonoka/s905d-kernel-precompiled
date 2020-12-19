@@ -17,7 +17,7 @@ env:
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
   KVER: 5.9.15
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
-  TOOLCHAIN: https://github.com/SuzukiHonoka/Aarch64_none-linux-gnu-toolchain-8-mirror/raw/master/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz
+  TOOLCHAIN: https://github.com/SuzukiHonoka/Aarch64_none-linux-gnu-toolchain-8-mirror/raw/master/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -38,9 +38,9 @@ jobs:
     - name: Installing cross compile toolchain
       run: |
         wget $TOOLCHAIN
-        xz -d gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz
-        tar xf gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar
-        export PATH=$PATH:$(pwd)/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin
+        xz -d gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+        tar xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar
+        export PATH=$PATH:$(pwd)/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin
         source ~/.bashrc
         export ARCH=arm64
         export CROSS_COMPILE=$GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu-
@@ -55,7 +55,7 @@ jobs:
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
+        make -j$(nproc) ARCH=arm64 $GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
     - name: Adjust Kernel Image Load addr and cp
       run: | 
         cd /tmp/ramfs/build/linux-$KVER
@@ -66,7 +66,7 @@ jobs:
     - name: Build KERNEL MOD
       run: |
         cd /tmp/ramfs/build/KMOD
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
+        make -j$(nproc) ARCH=arm64 $GITHUB_WORKSPACE/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
         cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |

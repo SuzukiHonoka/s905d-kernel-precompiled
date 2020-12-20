@@ -1,0 +1,25 @@
+From 91d582ba30330a188af937e45d4ff0f68f684ac4 Mon Sep 17 00:00:00 2001
+From: root <root@aws.starx.ink>
+Date: Sun, 20 Dec 2020 07:13:58 +0000
+Subject: [PATCH] fix n1 high load
+
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+index 9ef210f17..673f1b21b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+@@ -33,3 +33,8 @@ &cvbs_vdac_port {
+ &usb {
+ 	dr_mode = "host";
+ };
++
++&external_phy {
++        /delete-property/ reset-gpios;
++        interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
++};
+-- 
+2.25.1
+

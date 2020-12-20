@@ -16,7 +16,7 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.9.15
+  KVER: 5.10.1
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   TOOLCHAIN: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/gcc-10.2/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
 jobs:
@@ -28,15 +28,11 @@ jobs:
       uses: actions/checkout@v2.3.4
     - name: Host info
       run: |
+        pwd
         ls -lah
         lscpu
         free -h
         df -h 
-    - name: Download RES
-      run: |
-        wget $CONFIG_URL
-        wget $INSTALL_URL
-        wget $INSTALLM_URL
     - name: Installing requirements 
       run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Clone repos
@@ -58,6 +54,7 @@ jobs:
     - name: Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER
+        for p in `ls $GITHUB_WORKSPACE/patch`; do patch -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion
@@ -65,8 +62,6 @@ jobs:
     - name: Adjust Kernel Image Load addr and cp
       run: | 
         cd /tmp/ramfs/build/linux-$KVER
-        mkimage -A arm64 -O linux -T kernel -C none -a 0x01080000 -e 0x01080000 -n Kernel -d arch/arm64/boot/Image ../uImage    
-        cp ../uImage $GITHUB_WORKSPACE
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
         rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
@@ -95,7 +90,7 @@ jobs:
     - name: ZIP FILES
       run: |
         cd $GITHUB_WORKSPACE
-        zip data.zip install_kernel.sh Image uImage *${{ env.KVER }}* .config *.dtb 88x2bu.ko install_kmod.sh
+        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb 88x2bu.ko install_kmod.sh
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

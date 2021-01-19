@@ -54,7 +54,7 @@ jobs:
     - name: Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER
-        for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace --fuzz 3 -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
+        for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
         cp $GITHUB_WORKSPACE/.config .config -v
         sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
         touch .scmversion

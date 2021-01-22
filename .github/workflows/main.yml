@@ -34,7 +34,9 @@ jobs:
         free -h
         df -h 
     - name: Installing requirements 
-      run: sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
     - name: Clone repos
       run: |
         wget $KURL

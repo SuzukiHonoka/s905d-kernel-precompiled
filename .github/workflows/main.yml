@@ -12,7 +12,7 @@ on:
     types: [started]
 env:
   BUILD_DIR: /tmp/ramfs 
-  MODURL: https://github.com/cilynx/rtl88x2bu 
+  MODURL: https://github.com/RinCat/RTL88x2BU-Linux-Driver 
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 

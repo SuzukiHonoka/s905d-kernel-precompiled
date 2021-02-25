@@ -16,7 +16,7 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.10.17
+  KVER: 5.11.1
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   TOOLCHAIN: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/gcc-10.2/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
 jobs:
@@ -69,9 +69,9 @@ jobs:
         rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
     - name: Build KERNEL MOD
       run: |
-        cd /tmp/ramfs/build/KMOD
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
-        cp 88x2bu.ko $GITHUB_WORKSPACE
+        # cd /tmp/ramfs/build/KMOD
+        # make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
+        # cp 88x2bu.ko $GITHUB_WORKSPACE
     - name: LIST FILES
       run: |
         echo "ROOT DIR"

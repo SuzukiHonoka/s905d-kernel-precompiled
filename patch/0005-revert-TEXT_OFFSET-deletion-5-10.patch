@@ -1,5 +1,7 @@
---- arch/arm64/kernel/head.S	2021-02-23 12:55:57.000000000 +0000
-+++ arch/arm64/kernel/head.S	2021-02-25 13:08:23.521121137 +0000
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index a0dc987..602b893 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
 @@ -36,7 +36,7 @@
  
  #include "efi-header.S"
@@ -28,7 +30,7 @@
  	le64sym	_kernel_size_le			// Effective size of kernel image, little-endian
  	le64sym	_kernel_flags_le		// Informative flags, little-endian
  	.quad	0				// reserved
-@@ -363,7 +364,7 @@
+@@ -363,7 +364,7 @@ SYM_FUNC_START_LOCAL(__create_page_tables)
  	 * Map the kernel image (starting with PHYS_OFFSET).
  	 */
  	adrp	x0, init_pg_dir
@@ -37,7 +39,7 @@
  	add	x5, x5, x23			// add KASLR displacement
  	mov	x4, PTRS_PER_PGD
  	adrp	x6, _end			// runtime __pa(_end)
-@@ -455,7 +456,7 @@
+@@ -455,7 +456,7 @@ SYM_FUNC_END(__primary_switched)
  
  	.pushsection ".rodata", "a"
  SYM_DATA_START(kimage_vaddr)

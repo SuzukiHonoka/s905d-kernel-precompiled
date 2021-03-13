@@ -1,8 +1,12 @@
 # 构建状态
 ![S905D KERNEL CI](https://github.com/SuzukiHonoka/s905d-kernel-precompiled/workflows/S905D%20KERNEL%20CI/badge.svg?branch=master)
 
+# 关于不再构建 [stable] 及 [mainline] 内核分支的说明
+- 自 **5.11** 内核版本开始，上游引入的更改将导致无法正常启动设备。  
+- 目前 **5.10.x** 系列内核运行稳定
+
 # 简介
-此内核由**Starx**通过[Official Upstream](https://www.kernel.org/)直接进行编译，  
+此内核由**Starx**通过 [上游源码](https://www.kernel.org/) 直接进行编译，  
 增加了对 **ARM 32bit** 二进制文件的兼容及其他必要特性、功能的支持，除此之外无任何额外改动。  
 
 # <s>Linux Kernel 5.8.5 的 DWC2 有问题，可能导致USB不可用，不推荐安装。</s> Linux Kernel 5.8.10 及 later 的USB问题已修复。
@@ -10,7 +14,6 @@
 由于跨版本内核发行版包含了许多变更，需要更换DTB才能正常启动、使用USB等。  
 请在安装替换内核镜像前将新的DTB文件覆盖到旧的DTB文件，以确保设备能够正常启动。  
 目前N1已完成 5.9.x - 5.10.x 内核的安装及稳定性测试。
-
 
 # 内核安装安全性及设备体质情况的注意事项
 近期在不同的设备上安装内核遇到了一些未经预料的意外。  
@@ -25,7 +28,7 @@
 - 请在未测试正常之前不要将 **zImage.old** 及旧版本的内核包删除
 
 # 通过测试的版本
-- Linux Kernel 5.10.14 and above
+- Linux Kernel 5.10.23 and above
 
 **警告，不建议安装未测试的版本，除非您具备相当的恢复能力。**
 
@@ -40,18 +43,21 @@ dpkg -i *deb
 mv /boot/zImage /boot/zImage.old
 cp ./*dtb /boot/dtb/amlogic/
 cp ./Image /boot/zImage
+sync
 reboot
 ```
-
 **请确认 uEnv 中指定的DTB路径为 `/dtb/amlogic/meson-gxl-s905d-phicomm-n1.dtb` )**
 
+# 恢复
+若您在安装新内核后无法启动，请使用U盘进入U盘系统，挂载mmc第一分区，将 **zImage.old** 改回 **zImage** 即可。
+
 # 声明
-感谢[150balbes](https://github.com/150balbes)先前提供的仓库以供参考。  
+感谢 [150balbes](https://github.com/150balbes) 先前提供的仓库以供参考。  
 **用户安装此内核而引发的问题均与 Starx 作者无关。  
 由于涉及到内核更换，错误的操作可能使你的系统无法启动。  
 请务必小心谨慎执行。**
 
 # 分享
-本目录下的资源禁止分享至**恩山论坛**。  
+本目录下的资源禁止分享至 **恩山论坛**。  
 本人极度厌恶其论坛的管理员，私自将本人的账号无理由封禁。  
-其他论坛/群组/博客均可，但请务必保留 **Starx** 的 主页 链接。
+其他论坛/群组/博客均可，但请务必保留 **Starx** 的 [主页](https://www.starx.ink) 链接。

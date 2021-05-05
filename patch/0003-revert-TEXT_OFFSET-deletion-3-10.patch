@@ -20,12 +20,15 @@ index 1bda604f4..87ecbb53c 100644
  
  	.head.text : {
  		_text = .;
-@@ -307,4 +307,4 @@ ASSERT((__entry_tramp_text_end - __entry_tramp_text_start) == PAGE_SIZE,
+@@ -327,7 +327,7 @@
  /*
   * If padding is applied before .head.text, virt<->phys conversions will fail.
   */
 -ASSERT(_text == KIMAGE_VADDR, "HEAD is misaligned")
 +ASSERT(_text == (KIMAGE_VADDR + TEXT_OFFSET), "HEAD is misaligned")
+ 
+ ASSERT(swapper_pg_dir - reserved_pg_dir == RESERVED_SWAPPER_OFFSET,
+        "RESERVED_SWAPPER_OFFSET is wrong!")
 -- 
 2.25.1
 

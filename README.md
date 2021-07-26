@@ -1,9 +1,8 @@
 # 构建状态
 ![S905D KERNEL CI](https://github.com/SuzukiHonoka/s905d-kernel-precompiled/workflows/S905D%20KERNEL%20CI/badge.svg?branch=master)
 
-# 关于不再构建 [stable] 及 [mainline] 内核分支的说明
-- 自 **5.11** 内核版本开始，上游引入的更改将导致无法正常启动设备。  
-- 目前 **5.10.x** 系列内核运行稳定
+# 关于不再构建 [mainline] 内核分支的说明 
+- 目前 **stable** 系列内核运行稳定
 
 # 简介
 此内核由**Starx**通过 [上游源码](https://www.kernel.org/) 直接进行编译，  

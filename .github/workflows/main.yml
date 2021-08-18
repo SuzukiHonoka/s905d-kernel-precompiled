@@ -16,7 +16,7 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.13.11
+  KVER: 5.13.12
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   TOOLCHAIN: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/gcc-10.2/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
 jobs:

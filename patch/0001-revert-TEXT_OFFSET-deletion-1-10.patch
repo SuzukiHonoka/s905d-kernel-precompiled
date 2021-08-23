@@ -25,7 +25,7 @@ index da0252a..d379053 100644
  		if (!check_image_region((u64)_text, kernel_memsize)) {
  			efi_err("FIRMWARE BUG: Image BSS overlaps adjacent EFI memory region\n");
 -		} else if (IS_ALIGNED((u64)_text, min_kimg_align)) {
-+		} else if (IS_ALIGNED((u64)_text - TEXT_OFFSET, min_kimg_align())) {
++		} else if (IS_ALIGNED((u64)_text - TEXT_OFFSET, min_kimg_align)) {
  			/*
  			 * Just execute from wherever we were loaded by the
  			 * UEFI PE/COFF loader if the alignment is suitable.

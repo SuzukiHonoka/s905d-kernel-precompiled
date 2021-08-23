@@ -8,6 +8,7 @@ on:
     paths:
       - '.config'
       - '.github/workflows/main.yml'
+      - 'patch/**'
   watch:
     types: [started]
 env:

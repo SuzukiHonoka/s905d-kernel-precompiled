@@ -59,6 +59,7 @@ jobs:
         make -j$(nproc) bindeb-pkg
     - name: Extract Binaries
       run: | 
+        cd /tmp/ramfs/build/linux-$KVER
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
         rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE

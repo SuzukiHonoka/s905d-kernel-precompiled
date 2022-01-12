@@ -17,9 +17,12 @@ env:
   INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
   INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
   CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
-  KVER: 5.14.11
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
-  TOOLCHAIN: https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/gcc-10.2/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  INSTALL_TOOLCHAIN: https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_aarch64_toolchain.sh
+  ARCH: arm64
+  CROSS_COMPILE: /opt/toolchain/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin
+  KVER: 5.15.13
+  LOCALVERSION: -aml-s905d-starx-action
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -30,7 +33,6 @@ jobs:
     - name: Host info
       run: |
         pwd
-        ls -lah
         lscpu
         free -h
         df -h 
@@ -38,34 +40,25 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
-    - name: Clone repos
+    - name: Download scripts
       run: |
+        wget $INSTALL_TOOLCHAIN
         wget $KURL
+    - name: Clone Repos
+      run: |
         sh setup_new_kernel.sh $KVER
         git clone --depth=1 $MODURL /tmp/ramfs/build/KMOD
     - name: Installing cross compile toolchain
-      run: |
-        cd /tmp/ramfs && mkdir toolchain && cd toolchain
-        wget $TOOLCHAIN
-        xz -d gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
-        tar xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar
-        export PATH=$PATH:/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin
-        echo 'PATH=$PATH:/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin' > ~/.bashrc
-        source ~/.bashrc
-        export ARCH=arm64
-        export CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+      run: sh setup_aarch64_toolchain.sh
     - name: Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER
         for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
-        cp $GITHUB_WORKSPACE/.config .config -v
-        sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" .config
-        touch .scmversion
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- oldconfig
-        make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- LOCALVERSION="-aml-s905d-starx-action" bindeb-pkg
-    - name: Adjust Kernel Image Load addr and cp
+        cp $GITHUB_WORKSPACE/.config .config
+        make -j$(nproc) oldconfig
+        make -j$(nproc) bindeb-pkg
+    - name: Extract Binaries
       run: | 
-        cd /tmp/ramfs/build/linux-$KVER
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
         rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
@@ -74,12 +67,6 @@ jobs:
         # cd /tmp/ramfs/build/KMOD
         # make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
         # cp 88x2bu.ko $GITHUB_WORKSPACE
-    - name: LIST FILES
-      run: |
-        echo "ROOT DIR"
-        ls -lah $GITHUB_WORKSPACE
-        echo "BOOT IMAGE"
-        ls -lah /tmp/ramfs/build/linux-$KVER/arch/arm64/boot/
     - uses: actions/upload-artifact@v2
       with:
         name: Kernel ${{ env.KVER }}

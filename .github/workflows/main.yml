@@ -16,6 +16,8 @@ env:
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   INSTALL_TOOLCHAIN: https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_aarch64_toolchain.sh
   KVER: 5.15.44
+  ARCH: arm64
+  CROSS_COMPILE: /opt/toolchain/aarch64/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
 jobs:
   build:
@@ -46,12 +48,11 @@ jobs:
         sh setup_aarch64_toolchain.sh
     - name: Apply patchs and Build Kernel  
       run: |
-        source ~/.bashrc
         cd /tmp/ramfs/build/linux-$KVER
         for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
         cp $GITHUB_WORKSPACE/.config .config
-        make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc) oldconfig
-        make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc) bindeb-pkg
+        make -j$(nproc) oldconfig
+        make -j$(nproc) bindeb-pkg
     - name: Extract Binaries
       run: | 
         cd /tmp/ramfs/build/linux-$KVER

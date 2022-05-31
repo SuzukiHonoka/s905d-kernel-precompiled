@@ -13,15 +13,9 @@ on:
     types: [started]
 env:
   BUILD_DIR: /tmp/ramfs 
-  MODURL: https://github.com/RinCat/RTL88x2BU-Linux-Driver 
-  INSTALLM_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kmod.sh
-  INSTALL_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/install_kernel.sh 
-  CONFIG_URL: https://raw.githubusercontent.com/SuzukiHonoka/s905d-kernel-precompiled/master/.config 
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   INSTALL_TOOLCHAIN: https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_aarch64_toolchain.sh
-  ARCH: arm64
-  CROSS_COMPILE: /opt/toolchain/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
-  KVER: 5.15.32
+  KVER: 5.15.44
   LOCALVERSION: -aml-s905d-starx-action
 jobs:
   build:
@@ -47,33 +41,27 @@ jobs:
     - name: Clone Repos
       run: |
         sh setup_new_kernel.sh $KVER
-        git clone --depth=1 $MODURL /tmp/ramfs/build/KMOD
     - name: Installing cross compile toolchain
-      run: sh setup_aarch64_toolchain.sh
-    - name: Build Kernel  
+      run: | 
+        sh setup_aarch64_toolchain.sh
+    - name: Apply patchs and Build Kernel  
       run: |
+        source ~/.bashrc
         cd /tmp/ramfs/build/linux-$KVER
         for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
         cp $GITHUB_WORKSPACE/.config .config
-        make -j$(nproc) oldconfig
-        make -j$(nproc) bindeb-pkg
+        make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc) oldconfig
+        make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc) bindeb-pkg
     - name: Extract Binaries
       run: | 
         cd /tmp/ramfs/build/linux-$KVER
         cp arch/arm64/boot/Image $GITHUB_WORKSPACE
         cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
         rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
-    - name: Build KERNEL MOD
-      run: |
-        # cd /tmp/ramfs/build/KMOD
-        # make -j$(nproc) ARCH=arm64 CROSS_COMPILE=/tmp/ramfs/toolchain/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- KSRC=/tmp/ramfs/build/linux-$KVER
-        # cp 88x2bu.ko $GITHUB_WORKSPACE
     - uses: actions/upload-artifact@v2
       with:
         name: Kernel ${{ env.KVER }}
         path: |
-          88x2bu.ko
-          install_kmod.sh
           install_kernel.sh
           Image
           *${{ env.KVER }}*
@@ -82,7 +70,7 @@ jobs:
     - name: ZIP FILES
       run: |
         cd $GITHUB_WORKSPACE
-        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb 88x2bu.ko install_kmod.sh
+        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

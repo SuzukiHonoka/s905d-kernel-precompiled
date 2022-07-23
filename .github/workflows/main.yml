@@ -15,7 +15,7 @@ env:
   BUILD_DIR: /tmp/ramfs 
   KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
   INSTALL_TOOLCHAIN: https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_aarch64_toolchain.sh
-  KVER: 5.15.55
+  KVER: 5.15.56
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/aarch64/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action

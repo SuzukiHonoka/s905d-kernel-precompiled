@@ -41,11 +41,9 @@ jobs:
         wget $INSTALL_TOOLCHAIN
         wget $KURL
     - name: Clone Repos
-      run: |
-        sh setup_new_kernel.sh $KVER
+      run: bash setup_new_kernel.sh $KVER
     - name: Installing cross compile toolchain
-      run: | 
-        sh setup_aarch64_toolchain.sh
+      run: bash setup_aarch64_toolchain.sh
     - name: Apply patchs and Build Kernel  
       run: |
         cd /tmp/ramfs/build/linux-$KVER

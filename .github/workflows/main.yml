@@ -46,7 +46,7 @@ jobs:
       - name: Apply patchs
         run: |
           cd /tmp/ramfs/build/linux-$KVER
-          for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < patch/$p; done
+          for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < patch/$p; done
 
       - name: Build Kernel
         run: |

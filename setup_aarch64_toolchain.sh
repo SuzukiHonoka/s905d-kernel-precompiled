@@ -8,6 +8,6 @@ echo "toolchain ${tool_verision} will be installed to ${stage_dir}"
 mkdir -p $stage_dir && cd $stage_dir
 wget $tool_url
 echo "Decompressing"
-tar -xf $tool_file -C $stage_dir "*/aarch64-none-linux-gnu" && rm *xz
+tar -xf $tool_file -C $stage_dir --wildcards "*/aarch64-none-linux-gnu" && rm *xz
 export PATH=$PATH:"$stage_dir/aarch64-none-linux-gnu/bin"
 echo "Done"

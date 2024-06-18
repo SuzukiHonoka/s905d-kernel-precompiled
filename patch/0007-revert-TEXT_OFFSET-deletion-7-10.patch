@@ -1,0 +1,25 @@
+From c81a2d884b9199faa4fc2dc7d4e6296fdd105030 Mon Sep 17 00:00:00 2001
+From: root <root@aws.starx.ink>
+Date: Sun, 20 Dec 2020 05:16:24 +0000
+Subject: [PATCH 07/10] revert TEXT_OFFSET deletion 7/10
+
+---
+ arch/arm64/include/asm/memory.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index cd61239ba..5d1f91a99 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -173,7 +173,7 @@ extern s64			memstart_addr;
+ /* PHYS_OFFSET - the physical address of the start of memory. */
+ #define PHYS_OFFSET		({ VM_BUG_ON(memstart_addr & 1); memstart_addr; })
+ 
+-/* the virtual base of the kernel image */
++/* the virtual base of the kernel image (minus TEXT_OFFSET) */
+ extern u64			kimage_vaddr;
+ 
+ /* the offset between the kernel virtual and physical mappings */
+-- 
+2.25.1
+

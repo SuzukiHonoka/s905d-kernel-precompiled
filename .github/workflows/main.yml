@@ -46,7 +46,7 @@ jobs:
       - name: Apply patchs
         run: |
           cd /tmp/ramfs/build/linux-$KVER
-          cp -r $GITHUB_WORKSPACE/patch` .
+          cp -r $GITHUB_WORKSPACE/patch .
           for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < patch/$p; done
 
       - name: Build Kernel

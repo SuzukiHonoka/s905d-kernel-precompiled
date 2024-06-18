@@ -6,87 +6,95 @@ on:
     branches:
       - master
     paths:
-      - '.config'
-      - '.github/workflows/main.yml'
-      - 'patch/**'
+      - ".config"
+      - ".github/workflows/main.yml"
+      - "patch/**"
   watch:
     types: [started]
 env:
-  BUILD_DIR: /tmp/ramfs 
-  KURL:  https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_new_kernel.sh
-  INSTALL_TOOLCHAIN: https://github.com/SuzukiHonoka/PHICOMM_N1_SHELL_API/raw/master/setup_aarch64_toolchain.sh
+  BUILD_DIR: /tmp/ramfs
   KVER: 5.15.104
   ARCH: arm64
-  CROSS_COMPILE: /opt/toolchain/aarch64/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+  CROSS_COMPILE: /opt/toolchain/aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2.3.4
-    - name: Host info
-      run: |
-        pwd
-        lscpu
-        free -h
-        df -h 
-    - name: Installing requirements 
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
-    - name: Download scripts
-      run: |
-        wget $INSTALL_TOOLCHAIN
-        wget $KURL
-    - name: Clone Repos
-      run: bash setup_new_kernel.sh $KVER
-    - name: Installing cross compile toolchain
-      run: bash setup_aarch64_toolchain.sh
-    - name: Apply patchs and Build Kernel  
-      run: |
-        cd /tmp/ramfs/build/linux-$KVER
-        for p in `ls $GITHUB_WORKSPACE/patch`; do patch --ignore-whitespace -t -p1 -N < $GITHUB_WORKSPACE/patch/$p; done
-        cp $GITHUB_WORKSPACE/.config .config
-        make -j$(nproc) oldconfig
-        make -j$(nproc) bindeb-pkg
-    - name: Extract Binaries
-      run: | 
-        cd /tmp/ramfs/build/linux-$KVER
-        cp arch/arm64/boot/Image $GITHUB_WORKSPACE
-        cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
-        rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Kernel ${{ env.KVER }}
-        path: |
-          install_kernel.sh
-          Image
-          *${{ env.KVER }}*
-          .config
-          *.dtb
-    - name: ZIP FILES
-      run: |
-        cd $GITHUB_WORKSPACE
-        zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.KVER }}
-        release_name: Linux Kernel ${{ env.KVER }}
-        draft: false
-        prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./data.zip
-        asset_name: Kernel ${{ env.KVER }}.zip
-        asset_content_type: application/zip
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+
+      - name: Host info
+        run: |
+          pwd
+          lscpu
+          free -h
+          df -h
+
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
+
+      - name: Clone Repos
+        run: bash setup_new_kernel.sh $KVER
+
+      - name: Install cross compile toolchain
+        run: bash setup_aarch64_toolchain.sh
+
+      - name: Apply patchs
+        run: |
+          cd /tmp/ramfs/build/linux-$KVER
+          for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < patch/$p; done
+
+      - name: Build Kernel
+        run: |
+          cd /tmp/ramfs/build/linux-$KVER
+          cp $GITHUB_WORKSPACE/.config .config
+          make -j$(nproc) oldconfig
+          make -j$(nproc) bindeb-pkg
+
+      - name: Extract Binaries
+        run: |
+          cd /tmp/ramfs/build/linux-$KVER
+          cp arch/arm64/boot/Image $GITHUB_WORKSPACE
+          cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
+          rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
+
+      - uses: actions/upload-artifact@v4.3.3
+        with:
+          name: Kernel ${{ env.KVER }}
+          path: |
+            install_kernel.sh
+            Image
+            *${{ env.KVER }}*
+            .config
+            *.dtb
+
+      - name: ZIP FILES
+        run: |
+          cd $GITHUB_WORKSPACE
+          zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.KVER }}
+          release_name: Linux Kernel ${{ env.KVER }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./data.zip
+          asset_name: Kernel ${{ env.KVER }}.zip
+          asset_content_type: application/zip

@@ -15,7 +15,7 @@ env:
   BUILD_DIR: /tmp/ramfs
   KVER: 5.15.104
   ARCH: arm64
-  CROSS_COMPILE: /opt/toolchain/aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+  CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
 jobs:
   build:

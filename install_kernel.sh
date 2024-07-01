@@ -1,14 +1,32 @@
 #! /bin/sh
 KVER=$1
-if [ -z "$KVER" ];then
+
+# change dir if specified
+if [ -z "$KVER" ]; then
 echo "Using current dir for installing."
 else
 cd $KVER
 fi
-dpkg -i *deb
+
+# backup ramdisk image
+cp /boot/uInitrd /root/uInitrd.old
+
+# backup zImage
 mv /boot/zImage /boot/zImage.old
-cp ./*dtb /boot/dtb/amlogic/
+
+# install deb packages
+dpkg -i *deb
+
+# ensure dtb dir existence
+mkdir -p /boot/dtb/amlogic
+
+# move amlogic related dtbs
+cp ./*dtb /boot/dtb/amlogic
+
+# move zImage
 cp ./Image /boot/zImage
+
+# flush filesystem caches
 sync
 echo "Installation completed."
 echo "You may need to do a reboot for verity now."

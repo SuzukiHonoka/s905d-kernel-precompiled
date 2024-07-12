@@ -13,7 +13,7 @@ on:
     types: [started]
 env:
   BUILD_DIR: /tmp/ramfs
-  KVER: 5.15.161
+  KVER: 5.15.162
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action

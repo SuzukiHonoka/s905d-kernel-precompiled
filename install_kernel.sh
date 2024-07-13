@@ -9,7 +9,7 @@ cd $KVER
 fi
 
 # backup ramdisk image
-cp /boot/uInitrd /root/uInitrd.old
+cp /boot/uInitrd /boot/uInitrd.old
 
 # backup zImage
 mv /boot/zImage /boot/zImage.old

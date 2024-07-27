@@ -12,7 +12,7 @@ fi
 cp /boot/uInitrd /boot/uInitrd.old
 
 # backup zImage
-mv /boot/zImage /boot/zImage.old
+cp /boot/zImage /boot/zImage.old
 
 # install deb packages
 dpkg -i *deb
@@ -27,7 +27,9 @@ cp ./*dtb /boot/dtb/amlogic
 cp ./Image /boot/zImage
 
 # flush filesystem caches
-sync
+sync; sync; sync
+
+# prompt finish
 echo "Installation completed."
 echo "You may need to do a reboot for verity now."
 #reboot

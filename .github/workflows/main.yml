@@ -22,8 +22,10 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     env:
       BUILD_DIR: ${{ github.workspace }}/build
-      BUILD_STAGING_DIR: ${{ github.workspace }}/build/linux-${{ env.KVER }}
     steps:
+      - name: Set BUILD_STAGING_DIR
+        run: echo "BUILD_STAGING_DIR=${{ env.BUILD_DIR }}/linux-${{ env.KVER }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4.1.7
 

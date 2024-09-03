@@ -8,16 +8,13 @@ KVERV=$1
 fi
 
 KVER="linux-$KVERV"
+FILE_NAME="$KVER.tar.xz"
 KURL="https://cdn.kernel.org/pub/linux/kernel/v${KVERV:0:1}.x"
-KDURL="$KURL/$KVER.tar.xz"
+KDURL="$KURL/$FILE_NAME"
 
-if [ ! -d "$ROOT_DIR" ];then
-mkdir -p $ROOT_DIR
-fi
-
-sudo mount -t tmpfs -o size=6G tmpfs $ROOT_DIR
-mkdir $BUILD_DIR && cd $BUILD_DIR
+mkdir -p $ROOT_DIR && sudo mount -t tmpfs -o size=10G tmpfs $ROOT_DIR
+mkdir -p $BUILD_DIR && cd $BUILD_DIR
 
 wget $KDURL
-tar -xf "$KVER.tar.xz" && rm *xz
+tar -xf $FILE_NAME && rm $FILE_NAME
 cd "$BUILD_DIR/$KVER"

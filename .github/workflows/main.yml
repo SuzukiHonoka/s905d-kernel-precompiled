@@ -12,7 +12,6 @@ on:
   watch:
     types: [started]
 env:
-  BUILD_DIR: /tmp/ramfs
   KVER: 5.15.165
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
@@ -21,6 +20,9 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      BUILD_DIR: "$$GITHUB_WORKSPACE/build"
+      BUILD_STAGING_DIR: "$BUILD_DIR/linux-$KVER"
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -38,28 +40,28 @@ jobs:
           sudo apt-get upgrade -y
           sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
 
-      - name: Clone Repos
-        run: bash setup_new_kernel.sh $KVER
+      - name: Download and uncompress kernel
+        run: bash setup_new_kernel.sh "$KVER" "$BUILD_DIR"
 
       - name: Install cross compile toolchain
         run: bash setup_aarch64_toolchain.sh
 
       - name: Apply patchs
         run: |
-          cd /tmp/ramfs/build/linux-$KVER
-          cp -r $GITHUB_WORKSPACE/patch .
-          for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < patch/$p; done
+          cd "$BUILD_STAGING_DIR"
+          cp -r "$GITHUB_WORKSPACE/patch" .
+          for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < "patch/$p"; done
 
       - name: Build Kernel
         run: |
-          cd /tmp/ramfs/build/linux-$KVER
-          cp $GITHUB_WORKSPACE/.config .config
+          cd "$BUILD_STAGING_DIR"
+          cp "$GITHUB_WORKSPACE/.config" .config
           make -j$(nproc) oldconfig
           make -j$(nproc) bindeb-pkg
 
       - name: Extract Binaries
         run: |
-          cd /tmp/ramfs/build/linux-$KVER
+          cd "$BUILD_STAGING_DIR"
           cp arch/arm64/boot/Image $GITHUB_WORKSPACE
           cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
           rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
@@ -77,7 +79,7 @@ jobs:
       - name: ZIP FILES
         run: |
           cd $GITHUB_WORKSPACE
-          zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
+          zip data.zip install_kernel.sh Image "*${{ env.KVER }}*" .config *.dtb
 
       - name: Create Release
         id: create_release

@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event.repository.owner.id == github.event.sender.id
     env:
-      BUILD_DIR: "$$GITHUB_WORKSPACE/build"
-      BUILD_STAGING_DIR: "$BUILD_DIR/linux-$KVER"
+      BUILD_DIR: ${{ github.workspace }}/build
+      BUILD_STAGING_DIR: ${{ github.workspace }}/build/linux-${{ env.KVER }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7

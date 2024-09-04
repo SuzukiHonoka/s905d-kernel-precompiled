@@ -80,7 +80,7 @@ jobs:
             *.dtb
 
       - name: ZIP FILES
-        run: "*$KVER*.zip" install_kernel.sh Image "*$KVER*" .config *.dtb
+        run: zip "$KVER.zip" install_kernel.sh Image "*$KVER*" .config *.dtb
 
       - name: Release
         uses: softprops/action-gh-release@v2

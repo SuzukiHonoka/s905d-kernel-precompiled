@@ -43,30 +43,30 @@ jobs:
           sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
 
       - name: Download and uncompress kernel
-        run: bash setup_new_kernel.sh "$KVER" "$BUILD_DIR"
+        run: bash setup_new_kernel.sh $KVER $BUILD_DIR
 
       - name: Install cross compile toolchain
         run: bash setup_aarch64_toolchain.sh
 
       - name: Apply patches
         run: |
-          cd "$BUILD_STAGING_DIR"
+          cd $BUILD_STAGING_DIR
           cp -r "$GITHUB_WORKSPACE/patch" .
           for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < "patch/$p"; done
 
       - name: Build Kernel
         run: |
-          cd "$BUILD_STAGING_DIR"
+          cd $BUILD_STAGING_DIR
           cp "$GITHUB_WORKSPACE/.config" .config
           make -j$(nproc) oldconfig
           make -j$(nproc) bindeb-pkg
 
       - name: Extract files
         run: |
-          cd "$BUILD_STAGING_DIR"
-          cp arch/arm64/boot/Image "$GITHUB_WORKSPACE"
-          cp arch/arm64/boot/dts/amlogic/*.dtb "$GITHUB_WORKSPACE"
-          rsync -a "../*$KVER*" --exclude="linux-$KVER" "$GITHUB_WORKSPACE"
+          cd $BUILD_STAGING_DIR
+          cp arch/arm64/boot/Image $GITHUB_WORKSPACE
+          cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
+          rsync -a ../*$KVER* --exclude="linux-$KVER" $GITHUB_WORKSPACE
 
       - uses: actions/upload-artifact@v4.4.0
         with:
@@ -80,7 +80,7 @@ jobs:
             *.dtb
 
       - name: ZIP FILES
-        run: zip "$KVER.zip" install_kernel.sh Image "*$KVER*" .config *.dtb
+        run: zip "$KVER.zip" install_kernel.sh Image *$KVER* .config *.dtb
 
       - name: Release
         uses: softprops/action-gh-release@v2

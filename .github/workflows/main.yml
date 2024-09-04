@@ -1,7 +1,7 @@
 name: S905D KERNEL CI
 on:
   release:
-    types: published
+    types: [published]
   push:
     branches:
       - master
@@ -48,7 +48,7 @@ jobs:
       - name: Install cross compile toolchain
         run: bash setup_aarch64_toolchain.sh
 
-      - name: Apply patchs
+      - name: Apply patches
         run: |
           cd "$BUILD_STAGING_DIR"
           cp -r "$GITHUB_WORKSPACE/patch" .
@@ -61,12 +61,12 @@ jobs:
           make -j$(nproc) oldconfig
           make -j$(nproc) bindeb-pkg
 
-      - name: Extract Binaries
+      - name: Extract files
         run: |
           cd "$BUILD_STAGING_DIR"
-          cp arch/arm64/boot/Image $GITHUB_WORKSPACE
-          cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
-          rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
+          cp arch/arm64/boot/Image "$GITHUB_WORKSPACE"
+          cp arch/arm64/boot/dts/amlogic/*.dtb "$GITHUB_WORKSPACE"
+          rsync -a "../*$KVER*" --exclude="linux-$KVER" "$GITHUB_WORKSPACE"
 
       - uses: actions/upload-artifact@v4.4.0
         with:
@@ -80,28 +80,10 @@ jobs:
             *.dtb
 
       - name: ZIP FILES
-        run: |
-          cd $GITHUB_WORKSPACE
-          zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
+        run: "*$KVER*.zip" install_kernel.sh Image "*$KVER*" .config *.dtb
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.1.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          tag_name: ${{ env.KVER }}
-          release_name: Linux Kernel ${{ env.KVER }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./data.zip
-          asset_name: Kernel ${{ env.KVER }}.zip
-          asset_content_type: application/zip
+          files: ${{ env.KVER }}.zip

@@ -68,7 +68,7 @@ jobs:
           cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
           rsync -a ../*$KVER* --exclude=linux-$KVER $GITHUB_WORKSPACE
 
-      - uses: actions/upload-artifact@v4.3.3
+      - uses: actions/upload-artifact@v4.4.0
         with:
           name: Kernel ${{ env.KVER }}
           path: |

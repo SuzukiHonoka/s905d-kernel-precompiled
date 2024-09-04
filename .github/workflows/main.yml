@@ -81,7 +81,7 @@ jobs:
       - name: ZIP FILES
         run: |
           cd $GITHUB_WORKSPACE
-          zip data.zip install_kernel.sh Image "*${{ env.KVER }}*" .config *.dtb
+          zip data.zip install_kernel.sh Image *${{ env.KVER }}* .config *.dtb
 
       - name: Create Release
         id: create_release

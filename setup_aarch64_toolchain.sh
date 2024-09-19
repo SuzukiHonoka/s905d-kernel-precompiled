@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Starting aarch64 toolchain setup"
 stage_dir="/opt/toolchain"
-tool_verision="arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu"
+tool_verision="arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu"
 tool_file="$tool_verision.tar.xz"
 tool_url="https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/toolchain/$tool_file"
 echo "toolchain ${tool_verision} will be installed to ${stage_dir}"

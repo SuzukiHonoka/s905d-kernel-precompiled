@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - 6.6.x
     paths:
       - ".config"
       - ".github/workflows/main.yml"

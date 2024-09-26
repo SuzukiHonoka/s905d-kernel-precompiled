@@ -2,6 +2,10 @@
 
 ![S905D KERNEL CI](https://github.com/SuzukiHonoka/s905d-kernel-precompiled/workflows/S905D%20KERNEL%20CI/badge.svg?branch=master)
 
+# Chain uboot test build
+
+这是链式启动主线uboot的测试分支, 本系列内核偏移地址未被更改,不能使用原来的uboot启动.
+
 # 关于不再构建 mainline 及 stable 内核分支的说明 
 
 - 目前 **LTS** 系列内核运行稳定

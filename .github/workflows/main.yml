@@ -12,7 +12,7 @@ on:
   watch:
     types: [started]
 env:
-  KVER: 5.15.167
+  KVER: 6.6.52
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action

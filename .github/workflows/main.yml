@@ -17,6 +17,8 @@ env:
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
+  CONFIG_SITE: /etc/dpkg-cross/cross-config.arm64
+  DEB_BUILD_OPTIONS: nocheck
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -41,7 +43,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get upgrade -y
-          sudo apt-get install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
+          sudo apt-get install -y git fakeroot dpkg-cross build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
 
       - name: Download and uncompress kernel
         run: bash setup_new_kernel.sh $KVER $BUILD_DIR

@@ -1,0 +1,81 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+index 393d3cb..b4bd3d5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+@@ -24,8 +24,52 @@
+ 			default-state = "on";
+ 		};
+ 	};
++
++	dc_in: regulator-vcc_12v {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_12V";
++		regulator-min-microvolt = <0xb71b00>;
++		regulator-max-microvolt = <0xb71b00>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vddgpu: regulator-vddgpu {
++		compatible = "regulator-fixed";
++		regulator-name = "mali";
++		regulator-min-microvolt = <0xe7ef0>;
++		regulator-max-microvolt = <0xe7ef0>;
++		vin-supply = <&dc_in>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&cpu0 {
++	i-cache-size = <0x8000>;
++	d-cache-size = <0x8000>;
++};
++
++&cpu1 {
++        i-cache-size = <0x8000>;
++        d-cache-size = <0x8000>;
++};
++
++&cpu2 {
++        i-cache-size = <0x8000>;
++        d-cache-size = <0x8000>;
+ };
+ 
++&cpu3 {
++        i-cache-size = <0x8000>;
++        d-cache-size = <0x8000>;
++};
++
++&l2 {
++	cache-size = <0x80000>;
++	cache-unified;
++};
++
+ &cvbs_vdac_port {
+ 	status = "disabled";
+ };
+@@ -33,3 +77,23 @@
+ &usb {
+ 	dr_mode = "host";
+ };
++
++&uart_A {
++	status = "okay";
++	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
++	pinctrl-names = "default";
++	uart-has-rtscts;
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
++		max-speed = <2000000>;
++		clocks = <&wifi32k>;
++		clock-names = "lpo";
++	};
++};
++
++&external_phy {
++        /delete-property/ reset-gpios;
++        interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
++};

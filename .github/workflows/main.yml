@@ -1,19 +1,14 @@
 name: S905D KERNEL CI
 on:
-  release:
-    types: [published]
   push:
     branches:
-      - master
       - 6.6.x
     paths:
       - ".config"
       - ".github/workflows/main.yml"
       - "patch/**"
-  watch:
-    types: [started]
 env:
-  KVER: 6.6.52
+  KVER: 6.6.57
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action

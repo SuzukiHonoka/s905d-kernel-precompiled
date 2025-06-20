@@ -12,7 +12,7 @@ on:
   watch:
     types: [started]
 env:
-  KVER: 5.15.181
+  KVER: 5.15.185
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
@@ -51,8 +51,7 @@ jobs:
       - name: Apply patches
         run: |
           cd $BUILD_STAGING_DIR
-          cp -r "$GITHUB_WORKSPACE/patch" .
-          for p in `ls patch`; do patch --ignore-whitespace -t -p1 -N < "patch/$p"; done
+          for p in ../../patch/*; do patch --ignore-whitespace -t -p1 -N < "patch/$p"; done
 
       - name: Build Kernel
         run: |

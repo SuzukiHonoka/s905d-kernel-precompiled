@@ -12,7 +12,7 @@ on:
   watch:
     types: [started]
 env:
-  KVER: 5.15.194
+  KVER: 6.12.53
   ARCH: arm64
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
@@ -52,11 +52,11 @@ jobs:
         run: |
           cd $BUILD_STAGING_DIR
           for p in ../../patch/*; do echo "do patch $p" && patch --ignore-whitespace -t -p1 -N < "$p"; done
-
+          cp ../../meson-gxl-s905d-phicomm-n1.dts arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts 
       - name: Build Kernel
         run: |
           cd $BUILD_STAGING_DIR
-          cp "$GITHUB_WORKSPACE/.config" .config
+          cp ../../.config .config
           make -j$(nproc) oldconfig
           make -j$(nproc) bindeb-pkg
 
@@ -65,7 +65,7 @@ jobs:
           cd $BUILD_STAGING_DIR
           cp arch/arm64/boot/Image $GITHUB_WORKSPACE
           cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
-          rsync -a ../*$KVER* --exclude="linux-$KVER" $GITHUB_WORKSPACE
+          find ../ -maxdepth 1 -type f -name '*.deb' -exec cp -v '{}' $GITHUB_WORKSPACE \;
 
       - uses: actions/upload-artifact@v4.6.2
         with:

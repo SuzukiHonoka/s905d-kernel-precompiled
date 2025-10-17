@@ -8,6 +8,9 @@
 - 最新 **LTS** 版本已包含最新的实用特性
 - 不需要频繁更新
 
+# 该内核需要主线 u-boot 支持 
+该分支仅支持链式启动的主线 u-boot，不引入 `TEXT_OFFSET` 更改，原厂 u-boot 无法启动!!!  
+
 # 简介
 
 此内核由 **Starx** 通过 [上游源码](https://www.kernel.org/) 使用 GitHub Action 直接进行编译，  

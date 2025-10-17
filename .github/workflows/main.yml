@@ -15,9 +15,11 @@ on:
 env:
   KVER: 6.12.53
   ARCH: arm64
+  CC: /opt/toolchain/bin/aarch64-none-linux-gnu-gcc
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
   DEB_HOST_GNU_TYPE: aarch64-none-linux-gnu
   LOCALVERSION: -aml-s905d-starx-action
+  DEB_BUILD_OPTIONS: nocheck
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -42,8 +44,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get upgrade -y
-          sudo dpkg --add-architecture arm64
-          sudo apt-get install -y libssl-dev:arm64 debhelper-compat gcc-aarch64-linux-gnu git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
+          sudo apt-get install -y debhelper-compat gcc-aarch64-linux-gnu git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
 
       - name: Download and uncompress kernel
         run: bash setup_new_kernel.sh $KVER $BUILD_DIR

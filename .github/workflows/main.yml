@@ -17,9 +17,7 @@ env:
   ARCH: arm64
   CC: /opt/toolchain/bin/aarch64-none-linux-gnu-gcc
   CROSS_COMPILE: /opt/toolchain/bin/aarch64-none-linux-gnu-
-  DEB_HOST_GNU_TYPE: aarch64-none-linux-gnu
   LOCALVERSION: -aml-s905d-starx-action
-  DEB_BUILD_OPTIONS: nocheck
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -42,9 +40,14 @@ jobs:
 
       - name: Install requirements
         run: |
+          sudo dpkg --add-architecture arm64
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ports.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/ports.list
+          sudo apt-mark hold firefox
           sudo apt-get update
           sudo apt-get upgrade -y
-          sudo apt-get install -y debhelper-compat gcc-aarch64-linux-gnu git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
+          sudo apt-get install -y libssl-dev:arm64 debhelper-compat gcc-aarch64-linux-gnu git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison libncurses-dev autoconf dkms libudev-dev libpci-dev libiberty-dev u-boot-tools lzop
 
       - name: Download and uncompress kernel
         run: bash setup_new_kernel.sh $KVER $BUILD_DIR
@@ -59,6 +62,7 @@ jobs:
           cp -v ../../meson-gxl-s905d-phicomm-n1.dts arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts 
       - name: Build Kernel
         run: |
+          printenv
           cd $BUILD_STAGING_DIR
           cp -v ../../.config .config
           make -j$(nproc) oldconfig

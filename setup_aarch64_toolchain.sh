@@ -14,12 +14,12 @@ detect_install_dir() {
     # Use custom directory if specified
     if [[ -n "${TOOLCHAIN_DIR:-}" ]]; then
         echo "$TOOLCHAIN_DIR"
+    # GitHub Actions or CI environment (prioritize over system paths)
+    elif [[ -n "${GITHUB_ACTIONS:-}" ]] || [[ -n "${CI:-}" ]]; then
+        echo "${HOME}/toolchain"
     # Check if we can write to /opt (prefer system-wide install)
     elif [[ -w "/opt" ]] || [[ $EUID -eq 0 ]]; then
         echo "/opt/toolchain"
-    # GitHub Actions or user environment
-    elif [[ -n "${GITHUB_ACTIONS:-}" ]] || [[ -n "${CI:-}" ]]; then
-        echo "${HOME}/toolchain"
     # Fallback to user directory
     else
         echo "${HOME}/.local/toolchain"
@@ -44,6 +44,9 @@ readonly TOOL_VERSION="arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-linux-gnu
 readonly TOOL_FILE="${TOOL_VERSION}.tar.xz"
 readonly TOOL_URL="https://github.com/SuzukiHonoka/s905d-kernel-precompiled/releases/download/toolchain/${TOOL_FILE}"
 readonly PROFILE_FILE="$(detect_profile_file)"
+
+# Global variable for download temporary directory
+DOWNLOAD_TEMP_DIR=""
 
 # Logging functions
 log_info() {
@@ -139,69 +142,65 @@ check_existing_installation() {
 
 # Download toolchain with progress and verification
 download_toolchain() {
-    local temp_dir
-    temp_dir=$(mktemp -d)
+    DOWNLOAD_TEMP_DIR=$(mktemp -d)
     
-    log_step "Downloading toolchain to temporary directory: $temp_dir"
+    log_step "Downloading toolchain to temporary directory: $DOWNLOAD_TEMP_DIR"
     
     # Try wget first, fallback to curl
     local download_success=false
     
     if command -v wget &>/dev/null; then
-        if wget --progress=bar:force:noscroll -O "$temp_dir/$TOOL_FILE" "$TOOL_URL"; then
+        if wget --progress=bar:force:noscroll -O "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" "$TOOL_URL"; then
             download_success=true
         fi
     elif command -v curl &>/dev/null; then
-        if curl -L --progress-bar -o "$temp_dir/$TOOL_FILE" "$TOOL_URL"; then
+        if curl -L --progress-bar -o "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" "$TOOL_URL"; then
             download_success=true
         fi
     else
         log_error "Neither wget nor curl is available for downloading"
-        rm -rf "$temp_dir"
+        rm -rf "$DOWNLOAD_TEMP_DIR"
         exit 1
     fi
     
     if [[ "$download_success" != "true" ]]; then
         log_error "Failed to download toolchain"
-        rm -rf "$temp_dir"
+        rm -rf "$DOWNLOAD_TEMP_DIR"
         exit 1
     fi
     
     # Verify download
-    if [[ ! -f "$temp_dir/$TOOL_FILE" ]]; then
+    if [[ ! -f "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" ]]; then
         log_error "Downloaded file not found"
-        rm -rf "$temp_dir"
+        rm -rf "$DOWNLOAD_TEMP_DIR"
         exit 1
     fi
     
     local file_size
-    file_size=$(stat -f%z "$temp_dir/$TOOL_FILE" 2>/dev/null || stat -c%s "$temp_dir/$TOOL_FILE" 2>/dev/null)
+    file_size=$(stat -f%z "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" 2>/dev/null || stat -c%s "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" 2>/dev/null)
     if [[ $file_size -lt 100000000 ]]; then  # Less than 100MB seems suspicious
         log_error "Downloaded file appears to be corrupted (size: ${file_size} bytes)"
-        rm -rf "$temp_dir"
+        rm -rf "$DOWNLOAD_TEMP_DIR"
         exit 1
     fi
     
     log_info "Download completed (size: $((file_size / 1024 / 1024))MB)"
-    echo "$temp_dir"
 }
 
 # Extract toolchain
 extract_toolchain() {
-    local temp_dir="$1"
-    
     log_step "Creating installation directory: $STAGE_DIR"
     mkdir -p "$STAGE_DIR"
     
     log_step "Extracting toolchain..."
-    if ! tar -xf "$temp_dir/$TOOL_FILE" --strip-components=1 -C "$STAGE_DIR"; then
+    if ! tar -xf "$DOWNLOAD_TEMP_DIR/$TOOL_FILE" --strip-components=1 -C "$STAGE_DIR"; then
         log_error "Failed to extract toolchain"
-        rm -rf "$temp_dir" "$STAGE_DIR"
+        rm -rf "$DOWNLOAD_TEMP_DIR" "$STAGE_DIR"
         exit 1
     fi
     
     # Cleanup
-    rm -rf "$temp_dir"
+    rm -rf "$DOWNLOAD_TEMP_DIR"
     log_info "Extraction completed and temporary files cleaned up"
 }
 
@@ -325,16 +324,16 @@ usage() {
 # Cleanup function for signal handling
 cleanup() {
     log_warn "Script interrupted, cleaning up..."
-    [[ -n "${temp_dir:-}" ]] && rm -rf "$temp_dir"
+    [[ -n "${DOWNLOAD_TEMP_DIR:-}" ]] && rm -rf "$DOWNLOAD_TEMP_DIR"
     exit 1
 }
 
 # Main function
 main() {
-    local temp_dir
     
     log_info "Starting aarch64 toolchain setup"
     log_info "Toolchain version: $TOOL_VERSION"
+    log_info "Environment: CI=${CI:-unset}, GITHUB_ACTIONS=${GITHUB_ACTIONS:-unset}"
     log_info "Installation directory: $STAGE_DIR"
     
     # Set up signal handlers
@@ -346,8 +345,8 @@ main() {
     check_existing_installation
     
     # Download and install
-    temp_dir=$(download_toolchain)
-    extract_toolchain "$temp_dir"
+    download_toolchain
+    extract_toolchain
     setup_environment
     verify_installation
     

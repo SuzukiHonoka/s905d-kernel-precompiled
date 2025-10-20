@@ -9,6 +9,8 @@ on:
       - ".config"
       - ".github/workflows/main.yml"
       - "patch/**"
+      - "*.sh"
+      - "*.dts"
   watch:
     types: [started]
 env:

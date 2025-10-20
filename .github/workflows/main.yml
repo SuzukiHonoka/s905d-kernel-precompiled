@@ -107,15 +107,43 @@ jobs:
           
           cd $BUILD_STAGING_DIR
           cp -v ../../.config .config
-          make -j$(nproc) olddefconfig
-          make -j$(nproc) bindeb-pkg
+          
+          echo "=== Configuring kernel ==="
+          time make -j$(nproc) olddefconfig
+          
+          echo "=== Building kernel (this may take 20-30 minutes) ==="
+          time make -j$(nproc) bindeb-pkg
 
       - name: Extract files
         run: |
           cd $BUILD_STAGING_DIR
-          cp arch/arm64/boot/Image $GITHUB_WORKSPACE
-          cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
-          find ../ -maxdepth 1 -type f -name '*.deb' -exec cp -v '{}' $GITHUB_WORKSPACE \;
+          echo "=== Extracting build artifacts ==="
+          
+          # Copy kernel image
+          if [[ -f "arch/arm64/boot/Image" ]]; then
+            cp arch/arm64/boot/Image $GITHUB_WORKSPACE
+            echo "✓ Copied kernel Image"
+          else
+            echo "✗ ERROR: Kernel Image not found"
+            exit 1
+          fi
+          
+          # Copy device tree files
+          if ls arch/arm64/boot/dts/amlogic/*.dtb &>/dev/null; then
+            cp arch/arm64/boot/dts/amlogic/*.dtb $GITHUB_WORKSPACE
+            echo "✓ Copied DTB files"
+          else
+            echo "✗ WARNING: No DTB files found"
+          fi
+          
+          # Copy debian packages
+          if find ../ -maxdepth 1 -type f -name '*.deb' | head -1 | read; then
+            find ../ -maxdepth 1 -type f -name '*.deb' -exec cp -v '{}' $GITHUB_WORKSPACE \;
+            echo "✓ Copied DEB packages"
+          else
+            echo "✗ ERROR: No DEB packages found"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4.6.2
         with:

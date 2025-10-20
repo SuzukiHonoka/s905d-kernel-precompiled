@@ -107,7 +107,7 @@ jobs:
           
           cd $BUILD_STAGING_DIR
           cp -v ../../.config .config
-          make -j$(nproc) oldconfig
+          make -j$(nproc) olddefconfig
           make -j$(nproc) bindeb-pkg
 
       - name: Extract files

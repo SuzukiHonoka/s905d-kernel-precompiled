@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2086  # Word splitting intended for argument handling
 set -euo pipefail
 
 # Colors for output
@@ -53,12 +54,25 @@ list_kernel_versions() {
     echo "Fetching available kernel versions..."
     local major_versions=("4" "5" "6")
     
+    # Check for available download tools
+    local download_cmd=""
+    if command -v curl &>/dev/null; then
+        download_cmd="curl -s"
+    elif command -v wget &>/dev/null; then
+        download_cmd="wget -qO-"
+    else
+        log_error "Neither curl nor wget is available for fetching version list"
+        return 1
+    fi
+    
     for major in "${major_versions[@]}"; do
         echo "Kernel v${major}.x versions:"
-        curl -s "https://cdn.kernel.org/pub/linux/kernel/v${major}.x/" | \
+        if ! $download_cmd "https://cdn.kernel.org/pub/linux/kernel/v${major}.x/" | \
             grep -oE 'linux-[0-9]+\.[0-9]+(\.[0-9]+)?\.tar\.xz' | \
             sed 's/linux-//g' | sed 's/\.tar\.xz//g' | \
-            sort -V | tail -10
+            sort -V | tail -10; then
+            echo "Failed to fetch versions for v${major}.x"
+        fi
         echo
     done
 }
@@ -125,7 +139,20 @@ download_kernel() {
     while [[ $retry -lt $max_retries ]]; do
         log_step "Downloading kernel source (attempt $((retry + 1))/$max_retries)..."
         
-        if wget --progress=bar:force:noscroll --timeout=30 --tries=3 "$url"; then
+        # Try wget first, fallback to curl
+        local download_success=false
+        
+        if command -v wget &>/dev/null; then
+            if wget --progress=bar:force:noscroll --timeout=30 --tries=1 "$url"; then
+                download_success=true
+            fi
+        elif command -v curl &>/dev/null; then
+            if curl -L --progress-bar --connect-timeout 30 -o "$filename" "$url"; then
+                download_success=true
+            fi
+        fi
+        
+        if [[ "$download_success" == "true" ]]; then
             if verify_download "$filename"; then
                 return 0
             else
@@ -183,13 +210,26 @@ main() {
     # Check if kernel source already exists
     if [[ -d "$kernel_name" ]]; then
         log_warn "Kernel directory $kernel_name already exists"
-        read -p "Remove existing directory and re-download? (y/N): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
+        
+        # Auto-remove in CI environments or if FORCE_REINSTALL is set
+        if [[ -n "${CI:-}" ]] || [[ -n "${GITHUB_ACTIONS:-}" ]] || [[ "${FORCE_REINSTALL:-}" == "true" ]]; then
+            log_info "Auto-removing existing directory in CI environment..."
             rm -rf "$kernel_name"
-            log_info "Removed existing directory"
+        elif [[ -t 0 ]]; then  # Interactive mode
+            read -p "Remove existing directory and re-download? (y/N): " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                rm -rf "$kernel_name"
+                log_info "Removed existing directory"
+            else
+                log_info "Using existing kernel source"
+                cd "$kernel_name"
+                log_info "Ready to build in $(pwd)"
+                return 0
+            fi
         else
-            log_info "Using existing kernel source"
+            # Non-interactive - use existing by default
+            log_info "Non-interactive mode: using existing kernel source (use FORCE_REINSTALL=true to override)"
             cd "$kernel_name"
             log_info "Ready to build in $(pwd)"
             return 0

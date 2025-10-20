@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2086  # Word splitting intended for glob patterns
 set -euo pipefail
 
 # Colors for output
@@ -20,12 +21,29 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
-# Check if running as root
-check_root() {
-    if [[ $EUID -ne 0 ]]; then
-        log_error "This script must be run as root"
+# Check if we can perform required operations
+check_permissions() {
+    local need_root=false
+    
+    # Check if we need to write to /boot
+    if [[ ! -w "/boot" ]] && [[ -d "/boot" ]]; then
+        need_root=true
+    fi
+    
+    # Check if we need to install packages (dpkg requires root)
+    if ls ./*.deb &>/dev/null && [[ $EUID -ne 0 ]]; then
+        need_root=true
+    fi
+    
+    if [[ "$need_root" == "true" ]] && [[ $EUID -ne 0 ]]; then
+        log_error "This script requires root privileges for:"
+        [[ ! -w "/boot" ]] && echo "  - Writing to /boot directory"
+        ls ./*.deb &>/dev/null && echo "  - Installing .deb packages"
+        log_error "Please run with sudo"
         exit 1
     fi
+    
+    log_info "Permission check passed"
 }
 
 # Backup file with timestamp
@@ -47,8 +65,8 @@ main() {
     
     log_info "Starting kernel installation..."
     
-    # Check root privileges
-    check_root
+    # Check required permissions
+    check_permissions
     
     # Change directory if specified
     if [[ -n "$kver" ]]; then
@@ -108,12 +126,16 @@ main() {
     log_info "Installation completed successfully!"
     log_warn "A reboot is required to apply changes"
     
-    # Optional automatic reboot with confirmation
-    read -p "Reboot now? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        log_info "Rebooting system..."
-        reboot
+    # Optional automatic reboot with confirmation (only in interactive mode)
+    if [[ -t 0 ]] && [[ -z "${CI:-}" ]] && [[ -z "${GITHUB_ACTIONS:-}" ]]; then
+        read -p "Reboot now? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Rebooting system..."
+            reboot
+        fi
+    else
+        log_info "Non-interactive mode: skipping reboot prompt"
     fi
 }
 

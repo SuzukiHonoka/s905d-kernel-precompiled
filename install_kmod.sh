@@ -20,10 +20,11 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
-# Check if running as root
-check_root() {
+# Check if we can perform kernel module operations
+check_permissions() {
     if [[ $EUID -ne 0 ]]; then
-        log_error "This script must be run as root"
+        log_error "This script requires root privileges for kernel module operations"
+        log_error "Please run with sudo"
         exit 1
     fi
 }
@@ -36,8 +37,8 @@ main() {
     
     log_info "Starting wireless module installation..."
     
-    # Check root privileges
-    check_root
+    # Check required permissions
+    check_permissions
     
     # Get current kernel version
     kernel_version=$(uname -r)

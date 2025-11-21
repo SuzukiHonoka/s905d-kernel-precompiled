@@ -27,7 +27,7 @@ jobs:
         run: echo "BUILD_STAGING_DIR=${{ env.BUILD_DIR }}/linux-${{ env.KVER }}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
 
       - name: Host info
         run: |

@@ -14,7 +14,7 @@ on:
   watch:
     types: [started]
 env:
-  KVER: 6.12.59
+  KVER: 6.12.61
   ARCH: arm64
   CROSS_COMPILE: aarch64-none-linux-gnu-
   LOCALVERSION: -aml-s905d-starx-action
@@ -32,7 +32,7 @@ jobs:
         run: echo "BUILD_STAGING_DIR=${{ env.BUILD_DIR }}/linux-${{ env.KVER }}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.1
         
       - name: Make scripts executable
         run: |
